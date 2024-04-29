@@ -1,0 +1,58 @@
+1) git clone https://github.com/shiburaj/docker-course.git
+
+2) cd docker-course
+
+3) git checkout task4
+
+4) touch docker-compose.yml 
+
+version: ‘3.8’
+services:
+    web:
+       build: .
+       ports: 
+         - 8080:80
+       volumes:
+         - /root/docker-course:/var/www/html
+           
+    mysql:
+       image: mysql:latest
+       restart: always
+       ports:
+         - 8082:8082
+       volumes:
+         - /root/docker-course/mysql:/var/lib/mysql
+       environment:
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_DATABASE: todophp
+    adminer:
+       image: adminer
+       restart: always
+       ports:
+         - 8083:8080
+           
+    phpmyadmin:
+       image: phpmyadmin
+       restart: always
+       ports: 
+         - 8084:80
+       environment:
+         PMA_HOST: mysql
+
+5)touch Dockerfile 
+FROM php:8-apache
+RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
+RUN apt update -y && apt upgrade -y
+6)config.php
+<?php
+
+define('DB_HOST', 'mysql');
+define('DB_USER', 'root');
+define('DB_PASSWORD', 'secret');
+define('DB_NAME', 'todophp');
+
+7) ls -la
+8)chmod 775  -R .
+9) docker-compose up —build -d
+10) docker-compose down
+
